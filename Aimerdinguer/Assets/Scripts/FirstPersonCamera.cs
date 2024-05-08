@@ -7,9 +7,7 @@ public class FirstPersonCamera : MonoBehaviour
 
     float inputCameraX;
     public float mouseSensitivity = 2f;
-    float cameraVerticalRotation = 0f;
 
-    bool lockedCursor = true;
     // Start is called before the first frame update
     void Start()
     {
