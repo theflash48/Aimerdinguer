@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Media;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,6 @@ public class Player : MonoBehaviour
     //Inputs and Camera
     float inputCameraX = 0f;
     public float mouseSensitivity = 2f;
-    float cameraVerticalRotation = 0f;
 
     bool lockedCursor = true;
 
@@ -18,7 +18,8 @@ public class Player : MonoBehaviour
     public int playerMaxHealth = 100;
     public int playerHealth = 100;
     public float playerSpeed = 5;
-    
+    public GameObject playerCannon;
+
     //Weapon Data
     public int weaponInUse = 0;
     public float weaponDamage = 0;
@@ -31,36 +32,38 @@ public class Player : MonoBehaviour
     public float weaponReloadTime = 0f;
     public bool weaponReloading = false;
     public GameObject playerProyectile;
-    public Quaternion bulletRotation;
 
     //GUI
     public TMP_Text guiHealthAmount;
     public TMP_Text guiAmmoAmount;
+    public TMP_Text guiReloadTime;
+
+    //Pablo Prueba
+    public float vertical, horizontal;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         WeaponNew(0);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoveAndCamera();
-        WeaponReload();
-        if (!weaponReloading)
-        {
-            WeaponShoot();
-        }
+        Inputs();
+        WeaponTimers();
         GuiUpdate();
+        Debug.Log(transform.rotation.y*180);
     }
 
-    public void MoveAndCamera()
+    public void Inputs()
     {
-        inputCameraX = Input.GetAxis("Mouse X") * mouseSensitivity;
+
+        //Movement
         if (Input.GetKey(KeyCode.W))
         {
             transform.Translate(Vector3.forward * playerSpeed * Time.deltaTime);
@@ -77,9 +80,23 @@ public class Player : MonoBehaviour
         {
             transform.Translate(Vector3.right * playerSpeed * Time.deltaTime);
         }
+
+        //Camera
+        inputCameraX = Input.GetAxis("Mouse X") * mouseSensitivity;
         transform.Rotate(Vector3.up * inputCameraX);
+
+        //Weapon Management
+        if (Input.GetKey(KeyCode.Mouse0) && !weaponReloading)
+        {
+            WeaponShoot();
+        }
+        if (Input.GetKey(KeyCode.R)) {
+            WeaponReload();
+        }
+
+
     }
-    
+
     public void WeaponNew(int newWeapon)
     {
         switch (newWeapon)
@@ -90,8 +107,8 @@ public class Player : MonoBehaviour
                 weaponRange = 30;
                 weaponMaxBullets = 30;
                 weaponBullets = 30;
-                weaponFireRate = 1;
-                weaponReloadMaxTime = 5;
+                weaponFireRate = 0.2f;
+                weaponReloadMaxTime = 2;
                 break;
             case 1:
                 weaponInUse = 0;
@@ -132,17 +149,33 @@ public class Player : MonoBehaviour
         }
         weaponReloading = false;
     }
-    
 
+    public void WeaponShoot()
+    {
+        if (weaponFireRateCooldown <= 0 && weaponBullets > 0)
+        {
+            weaponFireRateCooldown = weaponFireRate;
+            weaponBullets--;
+
+            Instantiate(playerProyectile, new Vector3(playerCannon.transform.position.x, playerCannon.transform.position.y, playerCannon.transform.position.z), Quaternion.Euler(90, playerCannon.transform.rotation.y * 180, 0));
+            
+        }
+    }
     public void WeaponReload()
     {
-        if (Input.GetKey(KeyCode.R))
+
+        if (!weaponReloading)
         {
             weaponReloading = true;
             weaponReloadTime = weaponReloadMaxTime;
         }
-        
-        if (weaponReloading == true)
+
+    }
+
+    public void WeaponTimers()
+    {
+
+        if (weaponReloading)
         {
             weaponReloadTime -= Time.deltaTime;
             if (weaponReloadTime <= 0f)
@@ -154,39 +187,31 @@ public class Player : MonoBehaviour
                 weaponBullets = weaponMaxBullets;
             }
         }
-    }
-    public void WeaponShoot()
-    {
-        if (weaponReloading == false)
+        if (weaponFireRateCooldown > 0)
         {
-            if (weaponFireRateCooldown > 0)
-            {
-                weaponFireRateCooldown -= Time.deltaTime;
-            }
-
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if(weaponFireRateCooldown <= 0 && weaponBullets > 0)
-                {
-                    weaponFireRateCooldown = weaponFireRate;
-                    weaponBullets--;
-                    
-                    Instantiate(playerProyectile, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.Euler(90, 0, this.transform.rotation.y));
-                    Debug.Log("Disparo");
-                }
-                else
-                {
-                    Debug.Log("Fallo");
-                }
-
-            }
+            weaponFireRateCooldown -= Time.deltaTime;
         }
+
     }
 
     public void GuiUpdate()
     {
-        guiAmmoAmount.text = weaponBullets + "";
-        guiHealthAmount.text = playerHealth + "";
+        if (weaponReloadTime <= 0f)
+        {
+            guiReloadTime.text = "";
+        }
+        else
+        { 
+            guiReloadTime.text = "Reloading: " + weaponReloadTime.ToString("F" + 2);
+        }
+    
+        guiAmmoAmount.text = weaponBullets.ToString();
+        guiHealthAmount.text = playerHealth.ToString();
     }
 
+    
 }
+
+
+
+
