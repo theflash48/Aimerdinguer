@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerProyectile : MonoBehaviour
 {
 
-    public float speed = 5f;
+    private float speed = 5f;
+    private float timeAlive;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +17,20 @@ public class PlayerProyectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.up * speed * 1000 * speed * Time.deltaTime);
+        transform.Translate(Vector3.forward * speed * 10 * Time.deltaTime);
+        AutoDestroySelf();
+        if (timeAlive > 2)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            timeAlive += Time.deltaTime;
+        }
+    }
+
+    private void AutoDestroySelf()
+    {
 
     }
 
@@ -26,4 +41,5 @@ public class PlayerProyectile : MonoBehaviour
             Destroy(gameObject);
         }*/
     }
+
 }

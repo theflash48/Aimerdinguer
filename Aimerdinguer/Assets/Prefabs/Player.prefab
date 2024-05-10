@@ -139,10 +139,11 @@ MonoBehaviour:
   weaponReloadMaxTime: 0
   weaponReloadTime: 0
   weaponReloading: 0
-  playerProyectile: {fileID: 6380785018524936462, guid: be94b60f28215d942b30c0c0ec53de2a,
+  playerProyectile: {fileID: 4882069050715555480, guid: 32b0a9942931d5f4f8e80edcb3734d5d,
     type: 3}
   guiHealthAmount: {fileID: 0}
   guiAmmoAmount: {fileID: 0}
+  guiReloadTime: {fileID: 0}
   vertical: 0
   horizontal: 0
 --- !u!54 &4328841877520156313

@@ -21,9 +21,10 @@ public class Player : MonoBehaviour
     public GameObject playerCannon;
 
     //Weapon Data
+    public bool weaponHoldClick = false;
+    public float weaponBulletDispersion = 0;
     public int weaponInUse = 0;
     public float weaponDamage = 0;
-    public float weaponRange = 0;
     public int weaponMaxBullets = 0;
     public int weaponBullets = 0;
     public float weaponFireRate = 0;
@@ -86,10 +87,24 @@ public class Player : MonoBehaviour
         transform.Rotate(Vector3.up * inputCameraX);
 
         //Weapon Management
-        if (Input.GetKey(KeyCode.Mouse0) && !weaponReloading)
+        if(weaponHoldClick == true && !weaponReloading)
         {
-            WeaponShoot();
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                WeaponShoot();
+            }
         }
+        else if (!weaponReloading)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                WeaponShoot();
+            }
+        }
+        
+
+        
+
         if (Input.GetKey(KeyCode.R)) {
             WeaponReload();
         }
@@ -101,46 +116,51 @@ public class Player : MonoBehaviour
     {
         switch (newWeapon)
         {
-            case 0:
+            case 0: // Pistola Inicial
+                weaponHoldClick = true;
+                weaponBulletDispersion = 0;
                 weaponInUse = 0;
-                weaponDamage = 1;
-                weaponRange = 30;
+                weaponDamage = 20;
                 weaponMaxBullets = 30;
                 weaponBullets = 30;
-                weaponFireRate = 0.2f;
+                weaponFireRate = 0.1f;
                 weaponReloadMaxTime = 2;
                 break;
-            case 1:
-                weaponInUse = 0;
+            case 1: // Escopeta Corredera
+                weaponHoldClick = false;
+                weaponBulletDispersion = 0;
+                weaponInUse = 1;
                 weaponDamage = 1;
-                weaponRange = 30;
+                weaponMaxBullets = 30;
+                weaponBullets = 8;
+                weaponFireRate = 5;
+                weaponReloadMaxTime = 5;
+                break;
+            case 2: // 
+                weaponHoldClick = false;
+                weaponBulletDispersion = 0;
+                weaponInUse = 2;
+                weaponDamage = 1;
                 weaponMaxBullets = 30;
                 weaponBullets = 30;
                 weaponFireRate = 5;
                 weaponReloadMaxTime = 5;
                 break;
-            case 2:
-                weaponInUse = 0;
+            case 3: //
+                weaponHoldClick = true;
+                weaponBulletDispersion = 0;
+                weaponInUse = 3;
                 weaponDamage = 1;
-                weaponRange = 30;
                 weaponMaxBullets = 30;
                 weaponBullets = 30;
                 weaponFireRate = 5;
                 weaponReloadMaxTime = 5;
                 break;
-            case 3:
-                weaponInUse = 0;
+            case 4: //
+                weaponHoldClick = true;
+                weaponBulletDispersion = 0;
+                weaponInUse = 4;
                 weaponDamage = 1;
-                weaponRange = 30;
-                weaponMaxBullets = 30;
-                weaponBullets = 30;
-                weaponFireRate = 5;
-                weaponReloadMaxTime = 5;
-                break;
-            case 4:
-                weaponInUse = 0;
-                weaponDamage = 1;
-                weaponRange = 30;
                 weaponMaxBullets = 30;
                 weaponBullets = 30;
                 weaponFireRate = 5;
@@ -156,8 +176,10 @@ public class Player : MonoBehaviour
         {
             weaponFireRateCooldown = weaponFireRate;
             weaponBullets--;
-
-            Instantiate(playerProyectile, new Vector3(playerCannon.transform.position.x, playerCannon.transform.position.y, playerCannon.transform.position.z), Quaternion.Euler(90, playerCannon.transform.rotation.y * 180, 0));
+            Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
+                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
+                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion));
+            Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
             
         }
     }

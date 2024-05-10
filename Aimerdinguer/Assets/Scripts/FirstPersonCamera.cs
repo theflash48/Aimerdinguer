@@ -13,6 +13,7 @@ public class FirstPersonCamera : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        
     }
 
     // Update is called once per frame
@@ -21,4 +22,6 @@ public class FirstPersonCamera : MonoBehaviour
         inputCameraX = Input.GetAxis("Mouse X") * mouseSensitivity;
         transform.Rotate(Vector3.up * inputCameraX);
     }
+
+  
 }
