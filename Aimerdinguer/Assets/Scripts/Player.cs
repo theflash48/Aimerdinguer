@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        WeaponNew(0);
+        WeaponNew(1);
 
     }
 
@@ -117,34 +117,34 @@ public class Player : MonoBehaviour
         switch (newWeapon)
         {
             case 0: // Pistola Inicial
-                weaponHoldClick = true;
+                weaponHoldClick = false;
                 weaponBulletDispersion = 0;
                 weaponInUse = 0;
                 weaponDamage = 20;
-                weaponMaxBullets = 30;
-                weaponBullets = 30;
-                weaponFireRate = 0.1f;
+                weaponMaxBullets = 15;
+                weaponBullets = 15;
+                weaponFireRate = 0.2f;
                 weaponReloadMaxTime = 2;
                 break;
             case 1: // Escopeta Corredera
                 weaponHoldClick = false;
-                weaponBulletDispersion = 0;
+                weaponBulletDispersion = 15;
                 weaponInUse = 1;
                 weaponDamage = 1;
-                weaponMaxBullets = 30;
-                weaponBullets = 8;
-                weaponFireRate = 5;
-                weaponReloadMaxTime = 5;
+                weaponMaxBullets = 8;
+                weaponBullets = 7;
+                weaponFireRate = 0.8f;
+                weaponReloadMaxTime = 3;
                 break;
-            case 2: // 
-                weaponHoldClick = false;
-                weaponBulletDispersion = 0;
+            case 2: // Minigun
+                weaponHoldClick = true;
+                weaponBulletDispersion = 5;
                 weaponInUse = 2;
                 weaponDamage = 1;
-                weaponMaxBullets = 30;
-                weaponBullets = 30;
-                weaponFireRate = 5;
-                weaponReloadMaxTime = 5;
+                weaponMaxBullets = 100;
+                weaponBullets = 100;
+                weaponFireRate = 0.05f;
+                weaponReloadMaxTime = 3;
                 break;
             case 3: //
                 weaponHoldClick = true;
@@ -176,10 +176,25 @@ public class Player : MonoBehaviour
         {
             weaponFireRateCooldown = weaponFireRate;
             weaponBullets--;
-            Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
+            
+            if(weaponInUse == 1)
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
                                                   Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
                                                   Random.Range(-weaponBulletDispersion, weaponBulletDispersion));
-            Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
+                    Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
+
+                }
+            }
+            else
+            {
+                Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
+                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
+                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion));
+                Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
+            }
             
         }
     }

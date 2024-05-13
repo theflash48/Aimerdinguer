@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerProyectile : MonoBehaviour
 {
 
-    private float speed = 5f;
+    private float speed = 10f;
     private float timeAlive;
 
     // Start is called before the first frame update

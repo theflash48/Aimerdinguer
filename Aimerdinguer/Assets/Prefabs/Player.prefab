@@ -37,7 +37,7 @@ Transform:
   - {fileID: 6598615371354651891}
   - {fileID: 2973887365295934665}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2594312273959462631
 MeshFilter:
@@ -129,9 +129,10 @@ MonoBehaviour:
   playerHealth: 100
   playerSpeed: 5
   playerCannon: {fileID: 7985429081609512560}
+  weaponHoldClick: 0
+  weaponBulletDispersion: 0
   weaponInUse: 0
   weaponDamage: 0
-  weaponRange: 0
   weaponMaxBullets: 0
   weaponBullets: 0
   weaponFireRate: 0
@@ -441,7 +442,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7985429081609512560}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.25, y: 0, z: 1.75}
+  m_LocalPosition: {x: 0.25, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
