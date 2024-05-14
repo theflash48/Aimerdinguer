@@ -32,12 +32,23 @@ public class Player : MonoBehaviour
     public float weaponReloadMaxTime = 0;
     public float weaponReloadTime = 0f;
     public bool weaponReloading = false;
+
+    public bool weapon2HoldClick = false;
+    public float weapon2BulletDispersion = 0;
+    public int weapon2InUse = 0;
+    public float weapon2Damage = 0;
+    public int weapon2MaxBullets = 0;
+    public int weapon2Bullets = 0;
+    public float weapon2FireRate = 0;
+    public float weapon2FireRateCooldown = 0;
+    public float weapon2ReloadMaxTime = 0;
+    public float weapon2ReloadTime = 0f;
+    public bool weapon2Reloading = false;
+
+
     public GameObject playerProyectile;
 
-    //GUI
-    public TMP_Text guiHealthAmount;
-    public TMP_Text guiAmmoAmount;
-    public TMP_Text guiReloadTime;
+    
 
     //Pablo Prueba
     public float vertical, horizontal;
@@ -57,8 +68,6 @@ public class Player : MonoBehaviour
     {
         Inputs();
         WeaponTimers();
-        GuiUpdate();
-        Debug.Log(transform.rotation.y*180);
     }
 
     public void Inputs()
@@ -231,20 +240,7 @@ public class Player : MonoBehaviour
 
     }
 
-    public void GuiUpdate()
-    {
-        if (weaponReloadTime <= 0f)
-        {
-            guiReloadTime.text = "";
-        }
-        else
-        { 
-            guiReloadTime.text = "Reloading: " + weaponReloadTime.ToString("F" + 2);
-        }
     
-        guiAmmoAmount.text = weaponBullets.ToString();
-        guiHealthAmount.text = playerHealth.ToString();
-    }
 
     
 }
