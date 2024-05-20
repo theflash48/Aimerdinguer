@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerProyectile : MonoBehaviour
 {
 
-    private float speed = 10f;
+    private float speed = 5f;
     private float timeAlive;
+    public int damage;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,11 @@ public class PlayerProyectile : MonoBehaviour
     {
         transform.Translate(Vector3.forward * speed * 10 * Time.deltaTime);
         AutoDestroySelf();
+
+    }
+
+    private void AutoDestroySelf()
+    {
         if (timeAlive > 2)
         {
             Destroy(gameObject);
@@ -29,17 +35,12 @@ public class PlayerProyectile : MonoBehaviour
         }
     }
 
-    private void AutoDestroySelf()
-    {
-
-    }
-
     private void OnTriggerEnter(Collider collision)
     {
-        /*if (collision != null)
+        if (!collision.CompareTag("Pellet"))
         {
             Destroy(gameObject);
-        }*/
+        }
     }
 
 }

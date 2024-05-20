@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor.Media;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour
 {
@@ -12,46 +13,17 @@ public class Player : MonoBehaviour
     float inputCameraX = 0f;
     public float mouseSensitivity = 2f;
 
-    bool lockedCursor = true;
+    //bool lockedCursor = true;
 
     //Player Data
-    public int playerMaxHealth = 100;
-    public int playerHealth = 100;
+    public int maxHealth = 100;
+    public int health = 100;
     public float playerSpeed = 5;
-    public GameObject playerCannon;
-
-    //Weapon Data
-    public bool weaponHoldClick = false;
-    public float weaponBulletDispersion = 0;
-    public int weaponInUse = 0;
-    public float weaponDamage = 0;
-    public int weaponMaxBullets = 0;
-    public int weaponBullets = 0;
-    public float weaponFireRate = 0;
-    public float weaponFireRateCooldown = 0;
-    public float weaponReloadMaxTime = 0;
-    public float weaponReloadTime = 0f;
-    public bool weaponReloading = false;
-
-    public bool weapon2HoldClick = false;
-    public float weapon2BulletDispersion = 0;
-    public int weapon2InUse = 0;
-    public float weapon2Damage = 0;
-    public int weapon2MaxBullets = 0;
-    public int weapon2Bullets = 0;
-    public float weapon2FireRate = 0;
-    public float weapon2FireRateCooldown = 0;
-    public float weapon2ReloadMaxTime = 0;
-    public float weapon2ReloadTime = 0f;
-    public bool weapon2Reloading = false;
-
-
-    public GameObject playerProyectile;
-
-    
-
-    //Pablo Prueba
-    public float vertical, horizontal;
+    public int weaponInUse;
+    public GameObject shotgun;
+    public GameObject pistol;
+    public Weapon scriptShotgun;
+    public Weapon scriptPistol;
 
     // Start is called before the first frame update
     void Start()
@@ -59,15 +31,24 @@ public class Player : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        WeaponNew(1);
 
+        if (weaponInUse == 0)
+        {
+            pistol.SetActive(true);
+            shotgun.SetActive(false);
+        }
+        else if (weaponInUse == 1)
+        {
+            pistol.SetActive(false);
+            shotgun.SetActive(true);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         Inputs();
-        WeaponTimers();
+        Status();
     }
 
     public void Inputs()
@@ -96,155 +77,77 @@ public class Player : MonoBehaviour
         transform.Rotate(Vector3.up * inputCameraX);
 
         //Weapon Management
-        if(weaponHoldClick == true && !weaponReloading)
-        {
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                WeaponShoot();
-            }
-        }
-        else if (!weaponReloading)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                WeaponShoot();
-            }
-        }
         
-
-        
-
-        if (Input.GetKey(KeyCode.R)) {
-            WeaponReload();
-        }
-
-
-    }
-
-    public void WeaponNew(int newWeapon)
-    {
-        switch (newWeapon)
+        switch (weaponInUse)
         {
-            case 0: // Pistola Inicial
-                weaponHoldClick = false;
-                weaponBulletDispersion = 0;
-                weaponInUse = 0;
-                weaponDamage = 20;
-                weaponMaxBullets = 15;
-                weaponBullets = 15;
-                weaponFireRate = 0.2f;
-                weaponReloadMaxTime = 2;
-                break;
-            case 1: // Escopeta Corredera
-                weaponHoldClick = false;
-                weaponBulletDispersion = 15;
-                weaponInUse = 1;
-                weaponDamage = 1;
-                weaponMaxBullets = 8;
-                weaponBullets = 7;
-                weaponFireRate = 0.8f;
-                weaponReloadMaxTime = 3;
-                break;
-            case 2: // Minigun
-                weaponHoldClick = true;
-                weaponBulletDispersion = 5;
-                weaponInUse = 2;
-                weaponDamage = 1;
-                weaponMaxBullets = 100;
-                weaponBullets = 100;
-                weaponFireRate = 0.05f;
-                weaponReloadMaxTime = 3;
-                break;
-            case 3: //
-                weaponHoldClick = true;
-                weaponBulletDispersion = 0;
-                weaponInUse = 3;
-                weaponDamage = 1;
-                weaponMaxBullets = 30;
-                weaponBullets = 30;
-                weaponFireRate = 5;
-                weaponReloadMaxTime = 5;
-                break;
-            case 4: //
-                weaponHoldClick = true;
-                weaponBulletDispersion = 0;
-                weaponInUse = 4;
-                weaponDamage = 1;
-                weaponMaxBullets = 30;
-                weaponBullets = 30;
-                weaponFireRate = 5;
-                weaponReloadMaxTime = 5;
-                break;
-        }
-        weaponReloading = false;
-    }
-
-    public void WeaponShoot()
-    {
-        if (weaponFireRateCooldown <= 0 && weaponBullets > 0)
-        {
-            weaponFireRateCooldown = weaponFireRate;
-            weaponBullets--;
-            
-            if(weaponInUse == 1)
-            {
-                for (int i = 0; i < 15; i++)
+            case 0:
+                if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
-                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
-                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion));
-                    Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
-
+                    scriptPistol.PistolShoot();
                 }
-            }
-            else
+                break;
+
+            case 1:
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    scriptShotgun.ShotgunShoot();
+                }
+                break;
+        }
+                
+        if (Input.GetKeyDown(KeyCode.R)) {
+            //weaponReload();
+            switch (weaponInUse)
             {
-                Quaternion dispersion = Quaternion.Euler(Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
-                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion),
-                                                  Random.Range(-weaponBulletDispersion, weaponBulletDispersion));
-                Instantiate(playerProyectile, playerCannon.transform.position, transform.rotation * dispersion);
+                case 0:
+                    scriptPistol.Reload();
+                    break;
+
+                case 1:
+                    scriptShotgun.Reload();
+                    break;
             }
-            
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q) && !scriptPistol.reloading && !scriptShotgun.reloading)
+        {
+            if (weaponInUse == 0)
+            {
+                weaponInUse = 1;
+                pistol.SetActive(false);
+                shotgun.SetActive(true);
+            }
+            else if (weaponInUse == 1)
+            {
+                weaponInUse = 0;
+                pistol.SetActive(true);
+                shotgun.SetActive(false);
+            }
         }
     }
-    public void WeaponReload()
+    void Status()
     {
-
-        if (!weaponReloading)
+        if (health <= 0)
         {
-            weaponReloading = true;
-            weaponReloadTime = weaponReloadMaxTime;
+            Debug.Log("Game Over");
         }
-
     }
 
-    public void WeaponTimers()
+    private void OnTriggerEnter(Collider other)
     {
-
-        if (weaponReloading)
+        
+        if (other.gameObject.CompareTag("Mortadela"))
         {
-            weaponReloadTime -= Time.deltaTime;
-            if (weaponReloadTime <= 0f)
-            {
-                weaponReloading = false;
-            }
-            if (weaponReloading == false)
-            {
-                weaponBullets = weaponMaxBullets;
-            }
+            //Destroy(other.gameObject);
+            health -= other.gameObject.GetComponent<PlayerProyectile>().damage;
+            Debug.Log(other.gameObject.GetComponent<PlayerProyectile>().damage);
         }
-        if (weaponFireRateCooldown > 0)
+        if (other.gameObject.CompareTag("Dollar"))
         {
-            weaponFireRateCooldown -= Time.deltaTime;
+            //Destroy(other.gameObject);
+            health -= other.gameObject.GetComponent<PlayerProyectile>().damage;
+            Debug.Log(other.gameObject.GetComponent<PlayerProyectile>().damage);
         }
 
     }
-
-    
-
-    
 }
-
-
-
-
